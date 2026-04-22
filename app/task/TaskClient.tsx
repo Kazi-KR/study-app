@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import SpellcheckTextarea from "./SpellcheckTextarea";
 
 type ChatMsg = { id: number | string; role: "user" | "assistant"; content: string };
 
@@ -134,13 +135,10 @@ export default function TaskClient({
         </h2>
       </div>
       <div className="flex-1 p-3 min-h-0">
-        <textarea
+        <SpellcheckTextarea
           value={careerPlan}
-          onChange={(e) => setCareerPlan(e.target.value)}
+          onChange={setCareerPlan}
           placeholder="Write your 200–300 word career plan here…"
-          spellCheck={true}
-          lang="en"
-          className="w-full h-full resize-none rounded-md border border-neutral-300 p-3 text-sm leading-6"
         />
       </div>
       <div className="border-t px-5 py-3">

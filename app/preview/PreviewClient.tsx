@@ -109,6 +109,36 @@ export default function PreviewClient({ biographies }: { biographies: Bio[] }) {
           </span>
         </div>
 
+        {/* Quick-access links to the three participant entry URLs. Open in a
+            new tab so the researcher's preview session (admin token in
+            sessionStorage) isn't disturbed. */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          <a
+            href="/study/a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+          >
+            BIAS STUDY
+          </a>
+          <a
+            href="/study/b"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+          >
+            NEUTRAL STUDY
+          </a>
+          <a
+            href="/study/c"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+          >
+            CONTROL STUDY
+          </a>
+        </div>
+
         <div className="rounded-lg border bg-white p-4 shadow-sm mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
           <label className="flex flex-col gap-1 md:col-span-2">
             <span className="text-xs font-medium text-neutral-500 uppercase">

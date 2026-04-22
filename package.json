@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.3",
+    "dictionary-en": "^4.0.0",
     "groq-sdk": "^1.1.2",
     "next": "16.2.4",
+    "nspell": "^2.1.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "zod": "^4.3.6"
