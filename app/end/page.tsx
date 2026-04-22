@@ -15,7 +15,7 @@ export default async function DebriefPage() {
           Thank you for taking part in this study. Your responses have been
           recorded.
         </p>
-        <p className="text-neutral-500 text-xs pt-4">
+        <p className="text-neutral-500 text-xs pt-4 dark:text-neutral-400">
           You may now close this tab.
         </p>
       </div>

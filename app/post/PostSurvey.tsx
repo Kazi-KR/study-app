@@ -179,7 +179,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
       <h1 className="text-2xl font-semibold mb-4">A few last questions</h1>
-      <p className="text-sm text-neutral-600 mb-6">
+      <p className="text-sm text-neutral-600 mb-6 dark:text-neutral-400">
         {isControl
           ? "A final question before you finish."
           : "Please answer every item below."}
@@ -218,7 +218,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
                   value={usageOther}
                   onChange={(e) => setUsageOther(e.target.value)}
                   placeholder="Please specify…"
-                  className="mt-2 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+                  className="mt-2 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
                 />
               )}
             </div>
@@ -233,7 +233,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
               <textarea
                 value={noticed}
                 onChange={(e) => setNoticed(e.target.value)}
-                className="w-full min-h-[90px] rounded-md border border-neutral-300 p-3 text-sm leading-6"
+                className="w-full min-h-[90px] rounded-md border border-neutral-300 bg-white p-3 text-sm leading-6 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
                 placeholder="Open-ended — leave blank if nothing stood out"
               />
             </label>
@@ -252,12 +252,12 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
           />
         </label>
 
-        {error && <div className="text-sm text-red-600">{error}</div>}
+        {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
 
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
         >
           {submitting ? "Submitting…" : "Continue"}
         </button>
@@ -265,17 +265,18 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
 
       <style jsx global>{`
         .pill {
-          border: 1px solid rgb(212 212 212);
+          border: 1px solid var(--border);
           border-radius: 9999px;
           padding: 0.375rem 0.875rem;
           font-size: 0.8125rem;
-          background: white;
+          background: var(--input-bg);
+          color: var(--foreground);
           cursor: pointer;
         }
         .pill-on {
-          background: black;
-          color: white;
-          border-color: black;
+          background: var(--foreground);
+          color: var(--background);
+          border-color: var(--foreground);
         }
       `}</style>
     </main>

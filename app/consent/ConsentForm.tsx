@@ -12,7 +12,7 @@ export default function ConsentForm({
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="text-2xl font-semibold mb-4">Consent to Participate</h1>
-      <div className="prose prose-neutral text-sm leading-6 mb-6">
+      <div className="prose prose-neutral text-sm leading-6 mb-6 dark:prose-invert">
         <p>
           You are invited to take part in a research study about how people
           write with the help of AI writing assistants. The study is part of a
@@ -55,7 +55,7 @@ export default function ConsentForm({
         <button
           type="submit"
           disabled={!agreed}
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
         >
           Continue
         </button>

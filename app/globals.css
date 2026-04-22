@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
+/* Tailwind v4: switch the `dark:` variant from media-query to a class on
+   <html>. The ThemeToggle component flips that class. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0a0a0a;
+  /* Surfaces used by the study UI — light defaults. Override in .dark below. */
+  --surface: #ffffff;
+  --surface-muted: #fafafa;
+  --border: #e5e5e5;
+  --input-bg: #ffffff;
+  --text-muted: #525252;
+  --text-subtle: #737373;
+  --bubble-assistant: #f5f5f5;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --surface: #171717;
+  --surface-muted: #0a0a0a;
+  --border: #2a2a2a;
+  --input-bg: #171717;
+  --text-muted: #a3a3a3;
+  --text-subtle: #737373;
+  --bubble-assistant: #262626;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Inter (loaded via next/font in layout.tsx) exposes itself as --font-sans.
+     We prepend the variable to a high-quality system fallback so there's no
+     ugly Times flash before Inter arrives. */
+  --font-sans:
+    var(--font-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+    monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  /* Slightly tighter tracking at UI sizes reads more like modern product
+     interfaces (Linear, Vercel, Stripe) vs. browser defaults. */
+  font-feature-settings: "cv11", "ss01", "ss03";
+  text-rendering: optimizeLegibility;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
+}
+
+/* Headings get slightly tighter tracking + heavier weight for visual hierarchy
+   that reads as "app" rather than "blog post". */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+/* Form controls inherit the app font — browsers otherwise default inputs to
+   their own platform UI font, which looks jarring next to Inter. */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+/* Selection color that works in both themes without looking loud. */
+::selection {
+  background: color-mix(in oklab, var(--foreground) 18%, transparent);
 }

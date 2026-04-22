@@ -275,13 +275,14 @@ export default function SpellcheckTextarea({
         }
         /* Backdrop and textarea share EVERY layout-affecting property so the
            underlines in the backdrop sit exactly under the textarea's text. */
+        /* Source colors from CSS variables so light/dark toggle is automatic. */
         .spell-backdrop,
         .spell-textarea {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
-          border: 1px solid rgb(212 212 212);
+          border: 1px solid var(--border);
           border-radius: 0.375rem;
           padding: 0.75rem;
           font-family: inherit;
@@ -297,29 +298,30 @@ export default function SpellcheckTextarea({
           overflow: hidden;
           pointer-events: none;
           color: transparent;
-          background: white;
+          background: var(--input-bg);
           user-select: none;
         }
         .spell-textarea {
           resize: none;
           background: transparent;
-          color: rgb(23 23 23);
+          color: var(--foreground);
           overflow: auto;
         }
         .spell-textarea:focus {
           outline: 2px solid transparent;
           outline-offset: 2px;
-          border-color: rgb(0 0 0 / 0.4);
+          border-color: var(--foreground);
         }
         .spell-popup {
           position: absolute;
           z-index: 50;
           min-width: 140px;
           max-width: 240px;
-          background: white;
-          border: 1px solid rgb(212 212 212);
+          background: var(--surface);
+          color: var(--foreground);
+          border: 1px solid var(--border);
           border-radius: 0.375rem;
-          box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+          box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
           padding: 0.25rem 0;
           font-size: 0.8125rem;
         }
@@ -328,13 +330,13 @@ export default function SpellcheckTextarea({
           font-size: 0.6875rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          color: rgb(115 115 115);
-          border-bottom: 1px solid rgb(229 229 229);
+          color: var(--text-muted);
+          border-bottom: 1px solid var(--border);
           margin-bottom: 0.25rem;
         }
         .spell-popup-empty {
           padding: 0.375rem 0.75rem;
-          color: rgb(115 115 115);
+          color: var(--text-muted);
         }
         .spell-popup-item {
           display: block;
@@ -349,7 +351,7 @@ export default function SpellcheckTextarea({
         }
         .spell-popup-item:hover,
         .spell-popup-item:focus {
-          background: rgb(245 245 245);
+          background: var(--bubble-assistant);
           outline: none;
         }
       `}</style>
