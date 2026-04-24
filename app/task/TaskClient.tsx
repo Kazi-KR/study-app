@@ -52,7 +52,26 @@ export default function TaskClient({
   // Control group has no assistant, so the chat-turn gate doesn't apply.
   const turnsOk = isControl ? true : userTurns >= minUserTurns;
   const capReached = !isControl && userTurns >= maxUserTurns;
-  const canSubmit = wordOk && turnsOk && !submitting;
+  // The button used to be disabled when gates weren't met, which silently
+  // did nothing on click. Now the button is always clickable (unless a
+  // submission is already in flight) and we surface a targeted reason on
+  // click — much clearer feedback for the participant.
+  const canSubmit = !submitting;
+
+  // Passive, proactive hint shown above the Submit button explaining what's
+  // still needed. Kept in sync with the server-side checks in
+  // /api/submit/p9vqm2 and the click-time error below.
+  const blockingReason = (() => {
+    if (!turnsOk) {
+      const remaining = minUserTurns - userTurns;
+      return `Please chat with the writing assistant at least ${minUserTurns} times before submitting (${remaining} more to go).`;
+    }
+    if (!wordOk) {
+      if (words < 200) return `Your plan is ${words} words — please write at least 200.`;
+      if (words > 300) return `Your plan is ${words} words — please trim it to at most 300.`;
+    }
+    return null;
+  })();
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -109,6 +128,13 @@ export default function TaskClient({
   }
 
   async function onSubmitPlan() {
+    // Preflight: surface the same gate message the passive hint shows, so a
+    // click always produces visible feedback (red error line) even if the
+    // participant skipped the hint.
+    if (blockingReason) {
+      setSubmitErr(blockingReason);
+      return;
+    }
     setSubmitErr(null);
     setSubmitting(true);
     const res = await fetch("/api/submit/p9vqm2", {
@@ -153,8 +179,13 @@ export default function TaskClient({
             </span>
           )}
         </div>
+        {/* Only shown after a Submit click — no passive nagging while the
+            participant is still working. The red block is cleared on the next
+            successful click-path. */}
         {submitErr && (
-          <div className="mt-2 text-sm text-red-600 dark:text-red-400">{submitErr}</div>
+          <div className="mt-2 rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:border-red-800/60 dark:text-red-300">
+            {submitErr}
+          </div>
         )}
         <button
           disabled={!canSubmit}
