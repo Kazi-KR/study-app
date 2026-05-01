@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import SpellcheckTextarea from "./SpellcheckTextarea";
 
@@ -40,6 +40,7 @@ export default function TaskClient({
   const [submitting, setSubmitting] = useState(false);
   const [submitErr, setSubmitErr] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
 
   const isControl = condition === "control";
 
@@ -76,6 +77,17 @@ export default function TaskClient({
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Auto-size the chat textarea to fit its content. Claude-style: grows as
+  // the user types or pastes, collapses back to one line after send. Runs in
+  // useLayoutEffect so the height is written synchronously after React
+  // commits the new value — no visible flicker from a double-render.
+  useLayoutEffect(() => {
+    const el = chatInputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [input]);
 
   async function sendMessage() {
     const text = input.trim();
@@ -249,20 +261,45 @@ export default function TaskClient({
             e.preventDefault();
             sendMessage();
           }}
-          className="flex gap-2"
+          // items-end so the Send button stays aligned with the last visible
+          // line as the textarea grows taller.
+          className="flex items-end gap-2"
         >
-          <input
+          <textarea
+            ref={chatInputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              // Enter sends; Shift+Enter inserts a newline (default textarea
+              // behaviour, so no preventDefault). On IME composition (Chinese/
+              // Japanese input) e.nativeEvent.isComposing is true — don't send
+              // mid-composition, let the IME consume Enter.
+              if (
+                e.key === "Enter" &&
+                !e.shiftKey &&
+                !e.nativeEvent.isComposing
+              ) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            rows={1}
             disabled={streaming || capReached}
             placeholder={
-              capReached ? "Message limit reached" : "Type a message…"
+              capReached
+                ? "Message limit reached"
+                : "Type a message… (Shift+Enter for new line)"
             }
-            className="flex-1 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm disabled:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:disabled:bg-neutral-800"
+            // resize-none: user can't drag-resize; we control height via
+            // autosize. No max-height cap — the textarea grows to fit the
+            // full prompt, Claude-style. The parent section has a fixed
+            // height (PANEL_HEIGHT), so as the textarea grows the messages
+            // list above (flex-1) shrinks. The overall panel stays put.
+            className="flex-1 resize-none rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm leading-6 disabled:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:disabled:bg-neutral-800"
           />
           <button
             disabled={streaming || capReached || !input.trim()}
-            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
+            className="shrink-0 rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
           >
             Send
           </button>

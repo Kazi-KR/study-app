@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type Bio = {
   id: string;
@@ -23,6 +23,17 @@ export default function PreviewClient({ biographies }: { biographies: Bio[] }) {
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Claude-style autosize: grows with content, collapses after send. Runs in
+  // useLayoutEffect so the height is written synchronously after React commits
+  // the new value — no flicker.
+  useLayoutEffect(() => {
+    const el = chatInputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [input]);
 
   useEffect(() => {
     // Persist the token locally for convenience during a research session.
@@ -258,18 +269,39 @@ export default function PreviewClient({ biographies }: { biographies: Bio[] }) {
                   e.preventDefault();
                   send();
                 }}
-                className="flex gap-2"
+                // items-end so the Send button stays aligned with the last
+                // visible line as the textarea grows.
+                className="flex items-end gap-2"
               >
-                <input
+                <textarea
+                  ref={chatInputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    // Enter sends; Shift+Enter inserts a newline (default
+                    // textarea behaviour). IME composition check prevents
+                    // sending mid-composition for JP/CN/KR input.
+                    if (
+                      e.key === "Enter" &&
+                      !e.shiftKey &&
+                      !e.nativeEvent.isComposing
+                    ) {
+                      e.preventDefault();
+                      send();
+                    }
+                  }}
+                  rows={1}
                   disabled={streaming}
-                  placeholder="Message the assistant…"
-                  className="flex-1 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
+                  placeholder="Message the assistant… (Shift+Enter for new line)"
+                  // No max-height: the textarea grows to fit the whole
+                  // prompt, Claude-style. The chat panel is a fixed height
+                  // flex column, so as this grows, the messages list
+                  // above (flex-1) shrinks — the overall layout is stable.
+                  className="flex-1 resize-none rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm leading-6 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
                 />
                 <button
                   disabled={streaming || !input.trim()}
-                  className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
+                  className="shrink-0 rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
                 >
                   Send
                 </button>
