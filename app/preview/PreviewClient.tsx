@@ -130,7 +130,7 @@ export default function PreviewClient({ biographies }: { biographies: Bio[] }) {
             rel="noopener noreferrer"
             className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
           >
-            BIAS STUDY
+            NO-AI STUDY
           </a>
           <a
             href="/study/b"
@@ -146,7 +146,7 @@ export default function PreviewClient({ biographies }: { biographies: Bio[] }) {
             rel="noopener noreferrer"
             className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
           >
-            CONTROL STUDY
+            BIAS STUDY
           </a>
         </div>
 

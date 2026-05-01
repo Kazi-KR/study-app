@@ -20,7 +20,7 @@ Copy `.env.local.example` to `.env.local` and fill in:
 
 - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
 - `GROQ_API_KEY_1` … `GROQ_API_KEY_5`
-- `STUDY_SLUG_A` (neutral AI), `STUDY_SLUG_B` (biased AI), `STUDY_SLUG_C` (control — no AI) — pick opaque short slugs
+- `STUDY_SLUG_A` (control — no AI), `STUDY_SLUG_B` (neutral AI), `STUDY_SLUG_C` (biased AI) — pick opaque short slugs
 - `EXPORT_TOKEN` — a long random string for `/api/export`
 
 ### 4. Install and run
@@ -30,7 +30,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000/study/<STUDY_SLUG_A>`, `/study/<STUDY_SLUG_B>`, or `/study/<STUDY_SLUG_C>` to begin as a participant (neutral AI / biased AI / control respectively).
+Visit `http://localhost:3000/study/<STUDY_SLUG_A>`, `/study/<STUDY_SLUG_B>`, or `/study/<STUDY_SLUG_C>` to begin as a participant (control — no AI / neutral AI / biased AI respectively).
 
 ## Flow
 
@@ -56,7 +56,7 @@ Participant-facing routes carry opaque suffixes so DevTools inspection doesn't l
 
 ## Distributing links to participants
 
-Split the cohort across three links: `https://<app>/study/<STUDY_SLUG_A>` (neutral AI), `/study/<STUDY_SLUG_B>` (biased AI), and `/study/<STUDY_SLUG_C>` (control — no AI). Assignment is effectively done by you at distribution time; the app does not randomize. Slug→condition mapping is server-only (`lib/conditions.ts`) so the participant can't tell from the URL.
+Split the cohort across three links: `https://<app>/study/<STUDY_SLUG_A>` (control — no AI), `/study/<STUDY_SLUG_B>` (neutral AI), and `/study/<STUDY_SLUG_C>` (biased AI). Assignment is effectively done by you at distribution time; the app does not randomize. Slug→condition mapping is server-only (`lib/conditions.ts`) so the participant can't tell from the URL.
 
 ## Exporting data
 

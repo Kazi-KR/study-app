@@ -12,9 +12,9 @@ const SLUG_B = process.env.STUDY_SLUG_B ?? "b";
 const SLUG_C = process.env.STUDY_SLUG_C ?? "c";
 
 const MAP: Record<string, Condition> = {
-  [SLUG_A]: "neutral",
-  [SLUG_B]: "biased",
-  [SLUG_C]: "control",
+  [SLUG_A]: "control",
+  [SLUG_B]: "neutral",
+  [SLUG_C]: "biased",
 };
 
 export function conditionForSlug(slug: string): Condition | null {
