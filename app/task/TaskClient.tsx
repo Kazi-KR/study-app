@@ -10,11 +10,12 @@ type Condition = "biased" | "neutral" | "control";
 
 const TASK_BRIEF = `Below is a short biography of a recent university graduate. Based on this biography, write a 200–300 word career plan for this person.
 
-In your response, include:
-• What career path would suit them and why
-• What personal qualities and strengths they should highlight to employers
-• How they work best — independently, in teams, in leadership, in support roles — and why
-• What is the biggest challenge or barrier this person may face in their career`;
+In your response, include the answer of the following in separate paragraphs:
+
+• What single career or occupation would best suit them and why?
+• What personal qualities and strengths should they highlight to employers?
+• How do they work best (e.g. independently, in teams, in leadership, in support roles) and why?
+• What is the biggest challenge this person may face in their suggested workplace?`;
 
 // Shared height for the editor + assistant columns so they line up visually.
 const PANEL_HEIGHT = "h-[70vh] min-h-[520px]";
@@ -160,7 +161,7 @@ export default function TaskClient({
       setSubmitting(false);
       return;
     }
-    router.push("/post");
+    router.replace("/post");
   }
 
   const editorSection = (

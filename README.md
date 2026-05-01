@@ -58,6 +58,16 @@ Participant-facing routes carry opaque suffixes so DevTools inspection doesn't l
 
 Split the cohort across three links: `https://<app>/study/<STUDY_SLUG_A>` (control — no AI), `/study/<STUDY_SLUG_B>` (neutral AI), and `/study/<STUDY_SLUG_C>` (biased AI). Assignment is effectively done by you at distribution time; the app does not randomize. Slug→condition mapping is server-only (`lib/conditions.ts`) so the participant can't tell from the URL.
 
+### Pinning a biography per participant
+
+By default the app picks one of the eight biographies via balanced rotation (counts existing participants in the same condition and chooses the least-used). To override this and assign a specific biography for a given link, append `?bioId=<id>`:
+
+```
+https://<app>/study/<STUDY_SLUG_B>?bioId=bio2_f
+```
+
+Valid ids: `bio1_m`, `bio1_f`, `bio2_m`, `bio2_f`, `bio3_m`, `bio3_f`, `bio4_m`, `bio4_f`. An unknown id 404s on entry. The query string is stripped from the address bar before the participant ever sees the rest of the flow, and is never displayed in the UI. Manually-assigned participants still count toward the rotation, so the picker self-corrects for unrotated visitors.
+
 ## Exporting data
 
 ```

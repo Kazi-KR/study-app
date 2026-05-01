@@ -33,6 +33,21 @@ const THEME_BOOT_SCRIPT = `
 })();
 `;
 
+// Force a hard reload when a page is restored from the browser's bfcache
+// (back/forward cache). Without this, hitting Back can show a snapshot of an
+// already-submitted step (e.g. /consent after the participant has consented),
+// bypassing the server-side redirect chain that would normally bounce them
+// forward. The Cache-Control: no-store header in next.config.ts also disables
+// bfcache, but only after a full deploy/restart — this client-side guard
+// works immediately and across both dev and production.
+const BFCACHE_GUARD_SCRIPT = `
+(function() {
+  window.addEventListener('pageshow', function(e) {
+    if (e.persisted) window.location.reload();
+  });
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,6 +63,7 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: BFCACHE_GUARD_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
         <ThemeToggle />

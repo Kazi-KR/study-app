@@ -73,7 +73,7 @@ export default function IntakeForm() {
       setError("Something went wrong. Please try again.");
       return;
     }
-    router.push("/task");
+    router.replace("/task");
   }
 
   return (

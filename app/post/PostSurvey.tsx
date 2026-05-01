@@ -138,7 +138,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
       setError("Something went wrong.");
       return;
     }
-    router.push("/end");
+    router.replace("/end");
   }
 
   // Simple render-time counter so every question gets a sequential number

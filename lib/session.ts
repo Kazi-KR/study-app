@@ -4,12 +4,15 @@ import { db } from "@/lib/db";
 
 const COOKIE_PARTICIPANT = "study_participant";
 const COOKIE_SESSION = "study_session";
+// Session cookies (no maxAge / no expires) so the cookie dies with the
+// browser process. Per-tab session lifetime is enforced by the `study_tab`
+// marker in sessionStorage (see app/study/[slug]/StudyEntry.tsx); these
+// cookie options are defense in depth.
 const COOKIE_OPTS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
   path: "/",
-  maxAge: 60 * 60 * 24 * 7, // 7 days
 };
 
 export async function setStudyCookies(participantId: string, sessionId: string) {
