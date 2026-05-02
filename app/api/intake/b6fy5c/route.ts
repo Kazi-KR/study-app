@@ -3,14 +3,18 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { loadParticipant } from "@/lib/session";
 
+// `ai_use_frequency` and `ai_confidence` are optional because the no-AI
+// (control) condition doesn't ask those questions. `essay_writing_frequency`
+// is required for every condition.
 const Body = z.object({
   age: z.number().int().min(16).max(100),
   gender: z.string().min(1).max(100),
   university: z.string().min(1).max(200),
   year_level: z.string().min(1).max(50),
   field_of_study: z.string().min(1).max(200),
-  ai_use_frequency: z.number().int().min(1).max(5),
-  ai_confidence: z.number().int().min(1).max(5),
+  essay_writing_frequency: z.number().int().min(1).max(5),
+  ai_use_frequency: z.number().int().min(1).max(5).optional(),
+  ai_confidence: z.number().int().min(1).max(5).optional(),
 });
 
 export async function POST(req: Request) {

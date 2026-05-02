@@ -9,5 +9,5 @@ export default async function IntakePage() {
   if (!p) redirect("/");
   if (!p.consent_given) redirect("/consent");
   if (p.demographics) redirect("/task");
-  return <IntakeForm />;
+  return <IntakeForm condition={p.condition} />;
 }

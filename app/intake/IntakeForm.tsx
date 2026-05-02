@@ -15,11 +15,27 @@ const YEAR_LEVELS = [
 ];
 const LIKERT_FREQ = ["Never", "Rarely", "Sometimes", "Often", "Daily"];
 const LIKERT_CONF = ["Not at all", "Slightly", "Moderately", "Quite", "Very confident"];
+// Essay-writing frequency options (asked of every participant regardless of
+// condition). Five-point scale to match the existing Likert UI; the numeric
+// 1–5 value is what gets stored.
+const LIKERT_ESSAY = [
+  "Never",
+  "A few times a year",
+  "About once a month",
+  "A few times a month",
+  "Weekly or more often",
+];
 
-export default function IntakeForm() {
+type Condition = "biased" | "neutral" | "control";
+
+export default function IntakeForm({ condition }: { condition: Condition }) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Control (no-AI) participants don't see the AI questions, so we don't
+  // store/submit those values for them — they stay 0 and are stripped from
+  // the payload below.
+  const showAiQuestions = condition !== "control";
   const [form, setForm] = useState({
     age: "",
     gender: "",
@@ -27,6 +43,7 @@ export default function IntakeForm() {
     university: "",
     year_level: "",
     field_of_study: "",
+    essay_writing_frequency: 0,
     ai_use_frequency: 0,
     ai_confidence: 0,
   });
@@ -38,15 +55,16 @@ export default function IntakeForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (
+    const baseMissing =
       !form.age ||
       !form.gender ||
       !form.university ||
       !form.year_level ||
       !form.field_of_study ||
-      !form.ai_use_frequency ||
-      !form.ai_confidence
-    ) {
+      !form.essay_writing_frequency;
+    const aiMissing =
+      showAiQuestions && (!form.ai_use_frequency || !form.ai_confidence);
+    if (baseMissing || aiMissing) {
       setError("Please complete every field.");
       return;
     }
@@ -55,18 +73,22 @@ export default function IntakeForm() {
       form.gender === "Self-describe" && form.gender_self
         ? form.gender_self
         : form.gender;
+    const payload: Record<string, unknown> = {
+      age: Number(form.age),
+      gender,
+      university: form.university,
+      year_level: form.year_level,
+      field_of_study: form.field_of_study,
+      essay_writing_frequency: form.essay_writing_frequency,
+    };
+    if (showAiQuestions) {
+      payload.ai_use_frequency = form.ai_use_frequency;
+      payload.ai_confidence = form.ai_confidence;
+    }
     const res = await fetch("/api/intake/b6fy5c", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        age: Number(form.age),
-        gender,
-        university: form.university,
-        year_level: form.year_level,
-        field_of_study: form.field_of_study,
-        ai_use_frequency: form.ai_use_frequency,
-        ai_confidence: form.ai_confidence,
-      }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       setSubmitting(false);
@@ -152,18 +174,29 @@ export default function IntakeForm() {
         </Field>
 
         <Likert
-          label="How often do you use AI writing tools (e.g., ChatGPT)?"
-          options={LIKERT_FREQ}
-          value={form.ai_use_frequency}
-          onChange={(v) => update("ai_use_frequency", v)}
+          label="In general how often do you write essay-style responses for academic, personal or professional purposes?"
+          options={LIKERT_ESSAY}
+          value={form.essay_writing_frequency}
+          onChange={(v) => update("essay_writing_frequency", v)}
         />
 
-        <Likert
-          label="How confident are you in using AI tools for writing tasks?"
-          options={LIKERT_CONF}
-          value={form.ai_confidence}
-          onChange={(v) => update("ai_confidence", v)}
-        />
+        {showAiQuestions && (
+          <>
+            <Likert
+              label="How often do you use AI writing tools (e.g., ChatGPT)?"
+              options={LIKERT_FREQ}
+              value={form.ai_use_frequency}
+              onChange={(v) => update("ai_use_frequency", v)}
+            />
+
+            <Likert
+              label="How confident are you in using AI tools for writing tasks?"
+              options={LIKERT_CONF}
+              value={form.ai_confidence}
+              onChange={(v) => update("ai_confidence", v)}
+            />
+          </>
+        )}
 
         {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
 
