@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 
 const GENDERS = ["Male", "Female", "Non-binary", "Prefer not to say", "Self-describe"];
 const YEAR_LEVELS = [
-  "Undergraduate Y1",
-  "Undergraduate Y2",
-  "Undergraduate Y3",
-  "Undergraduate Y4",
+  "Undergraduate Year 1",
+  "Undergraduate Year 2",
+  "Undergraduate Year 3",
+  "Undergraduate Year 4",
   "Master's",
   "PhD",
   "Other",
@@ -40,7 +40,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
     age: "",
     gender: "",
     gender_self: "",
-    university: "",
+    university: "BRAC University",
     year_level: "",
     field_of_study: "",
     essay_writing_frequency: 0,
