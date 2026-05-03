@@ -48,6 +48,15 @@ export default function StudyEntry({
       window.history.replaceState(null, "", `/study/${slug}`);
     }
 
+    // When a researcher passes `?bioId=…` they explicitly want a fresh
+    // participant assigned to that biography. Drop any leftover tab marker so
+    // the resume path is skipped and the start path runs. Real participants'
+    // distributed links normally don't carry bioId, so this doesn't affect
+    // them.
+    if (bioId) {
+      sessionStorage.removeItem(TAB_MARKER_KEY);
+    }
+
     let cancelled = false;
 
     async function handshake() {
