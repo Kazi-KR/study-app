@@ -1,63 +1,93 @@
 "use client";
 
-import { useState } from "react";
-
 export default function ConsentForm({
   action,
 }: {
   action: (fd: FormData) => void;
 }) {
-  const [agreed, setAgreed] = useState(false);
-
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="text-2xl font-semibold mb-4">Consent to Participate</h1>
       <div className="prose prose-neutral text-sm leading-6 mb-6 dark:prose-invert">
         <p>
           You are invited to take part in a research study about how people
-          write with the help of AI writing assistants. The study is part of a
-          Master's thesis in Human–Computer Interaction.
+          write with the help of AI writing assistants. This study is being
+          conducted as part of a Master&rsquo;s thesis under the supervision of
+          Dr. S. M. Taiabul Haque and is approved under his Institutional
+          Review Board (IRB) oversight.
         </p>
+
+        <h2 className="text-base font-semibold mt-6 mb-2">What You Will Do</h2>
+        <p>If you agree to participate, you will:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Read a short biography of a recent university graduate</li>
+          <li>
+            Have a brief conversation with an AI assistant about career
+            planning
+          </li>
+          <li>Write a 200&ndash;300 word career plan for that graduate</li>
+          <li>Complete a short survey</li>
+        </ul>
+
+        <h2 className="text-base font-semibold mt-6 mb-2">Duration</h2>
         <p>
-          <strong>What you will do.</strong> You will read a short biography of a
-          recent university graduate, have a short conversation with an AI
-          assistant about career planning, and then write a 200–300 word career
-          plan for that graduate. Afterwards, you will answer a short survey.
-          The session takes approximately 15–25 minutes.
+          The entire session is expected to take approximately 30&ndash;45
+          minutes.
         </p>
+
+        <h2 className="text-base font-semibold mt-6 mb-2">Compensation</h2>
+        <p>You will receive 2 bonus marks for completing the study. If you choose not to participate, you may
+          complete an alternative assignment to receive an equivalent 2 bonus
+          marks, ensuring that your decision will not affect your academic
+          standing.
+        </p>
+
+        <h2 className="text-base font-semibold mt-6 mb-2">
+          Data Collection and Privacy
+        </h2>
+        <p>We will collect:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Anonymous demographic information</li>
+          <li>The full conversation you have with the AI assistant</li>
+          <li>Your final written response</li>
+        </ul>
         <p>
-          <strong>Data we collect.</strong> Your anonymous demographic answers,
-          the full conversation you have with the assistant, and your final
-          written text. No directly identifying information (name, email) is
-          collected. Data is stored securely and will only be reported in
-          aggregate form.
+          No directly identifying information (such as name or email) will be
+          collected. All data will be stored securely and used only for
+          research purposes. Results will be reported in aggregate form, and
+          individual responses will not be identifiable.
         </p>
+
+        <h2 className="text-base font-semibold mt-6 mb-2">
+          Voluntary Participation
+        </h2>
         <p>
-          <strong>Voluntariness.</strong> Participation is voluntary. You may
-          close the browser tab at any time and your partial data will not be
-          used.
+          Your participation is completely voluntary. You may withdraw at any
+          time by closing the browser tab. If you withdraw, any partial data
+          will not be used in the study.
         </p>
+
+        <h2 className="text-base font-semibold mt-6 mb-2">Consent Statement</h2>
+        <p>By proceeding with the study, you confirm that:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>You have read and understood the information above</li>
+          <li>You voluntarily agree to participate</li>
+          <li>You are aware of your right to withdraw at any time</li>
+        </ul>
       </div>
-      <form action={action} className="space-y-4">
-        <label className="flex items-start gap-3 text-sm">
-          <input
-            type="checkbox"
-            name="consent"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-1"
-          />
-          <span>
-            I am 18 years or older, I have read the information above, and I
-            agree to participate.
-          </span>
-        </label>
+
+      {/*
+        Single affirmative-action button: clicking it IS the consent. The
+        hidden `consent` input keeps the existing server action's check
+        (`formData.get("consent") === "on"`) working without modification.
+      */}
+      <form action={action}>
+        <input type="hidden" name="consent" value="on" />
         <button
           type="submit"
-          disabled={!agreed}
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
+          className="rounded-md bg-black px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
         >
-          Continue
+          I agree to participate in this study
         </button>
       </form>
     </main>
