@@ -42,7 +42,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
     gender_self: "",
     university: "BRAC University",
     year_level: "",
-    field_of_study: "",
+    field_of_study: "Computer Science and Engineering",
     essay_writing_frequency: 0,
     ai_use_frequency: 0,
     ai_confidence: 0,
@@ -174,7 +174,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
         </Field>
 
         <Likert
-          label="In general how often do you write essay-style responses for academic, personal or professional purposes?"
+          label="How often do you write essay-style responses for academic, personal or professional purposes?"
           options={LIKERT_ESSAY}
           value={form.essay_writing_frequency}
           onChange={(v) => update("essay_writing_frequency", v)}

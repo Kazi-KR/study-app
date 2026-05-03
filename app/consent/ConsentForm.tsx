@@ -10,8 +10,7 @@ export default function ConsentForm({
       <h1 className="text-2xl font-semibold mb-4">Consent to Participate</h1>
       <div className="prose prose-neutral text-sm leading-6 mb-6 dark:prose-invert">
         <p>
-          You are invited to take part in a research study about how people
-          write with the help of AI writing assistants. This study is being
+          You are invited to take part in a research study to explore how students think about and write a career vision plan for a peer in different environments. This study is being
           conducted as part of a Master&rsquo;s thesis under the supervision of
           Dr. S. M. Taiabul Haque and is approved under his Institutional
           Review Board (IRB) oversight.
@@ -54,6 +53,7 @@ export default function ConsentForm({
           <li>Anonymous demographic information</li>
           <li>The full conversation you have with the AI assistant</li>
           <li>Your final written response</li>
+          <li>Post survey responses</li>
         </ul>
         <p>
           No directly identifying information (such as name or email) will be

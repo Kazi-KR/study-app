@@ -83,3 +83,6 @@ button {
 ::selection {
   background: color-mix(in oklab, var(--foreground) 18%, transparent);
 }
+button {
+  cursor: pointer;
+}
