@@ -40,6 +40,11 @@ export default function TaskClient({
   const [careerPlan, setCareerPlan] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitErr, setSubmitErr] = useState<string | null>(null);
+  // Pre-submission confirmation modal: a click on Submit no longer fires the
+  // POST directly. It first opens a modal asking the participant to confirm
+  // they've read what they're about to send; only the modal's confirm button
+  // calls the API.
+  const [showConfirm, setShowConfirm] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -140,7 +145,7 @@ export default function TaskClient({
     }
   }
 
-  async function onSubmitPlan() {
+  function onSubmitPlan() {
     // Preflight: surface the same gate message the passive hint shows, so a
     // click always produces visible feedback (red error line) even if the
     // participant skipped the hint.
@@ -149,6 +154,10 @@ export default function TaskClient({
       return;
     }
     setSubmitErr(null);
+    setShowConfirm(true);
+  }
+
+  async function confirmSubmit() {
     setSubmitting(true);
     const res = await fetch("/api/submit/p9vqm2", {
       method: "POST",
@@ -159,6 +168,7 @@ export default function TaskClient({
       const body = await res.json().catch(() => ({}));
       setSubmitErr(body.error ?? "Submission failed.");
       setSubmitting(false);
+      setShowConfirm(false);
       return;
     }
     router.replace("/post");
@@ -335,6 +345,51 @@ export default function TaskClient({
           </div>
         )}
       </div>
+
+      {/*
+        Pre-submission confirmation. Click "Yes, submit" → fires the API call.
+        Click "Go back and review" → just dismisses the modal so the
+        participant can keep editing. While `submitting` is true the buttons
+        lock so a double-click can't fire two requests.
+      */}
+      {showConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="submit-confirm-title"
+        >
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-900">
+            <h3
+              id="submit-confirm-title"
+              className="text-base font-semibold mb-2"
+            >
+              Have you carefully read what you&apos;re about to submit?
+            </h3>
+            <p className="text-sm text-neutral-600 mb-5 dark:text-neutral-400">
+              Once submitted, you can&apos;t change your career plan.
+            </p>
+            <div className="flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowConfirm(false)}
+                disabled={submitting}
+                className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-100 disabled:opacity-40 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              >
+                Go back and review
+              </button>
+              <button
+                type="button"
+                onClick={confirmSubmit}
+                disabled={submitting}
+                className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-white dark:text-black"
+              >
+                {submitting ? "Submitting…" : "Yes, submit"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

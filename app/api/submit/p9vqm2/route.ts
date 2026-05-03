@@ -57,10 +57,26 @@ export async function POST(req: Request) {
     }
   }
 
+  // Compute time-on-task in seconds. `task_started_at` is stamped server-side
+  // when the participant first lands on /task (see app/task/page.tsx). If for
+  // any reason it's missing (e.g. a participant whose row predates the
+  // task_started_at column) we leave duration_seconds null rather than
+  // recording a misleading zero.
+  const taskStartedAt = p.task_started_at;
+  const durationSeconds = taskStartedAt
+    ? Math.max(
+        0,
+        Math.round(
+          (Date.now() - new Date(taskStartedAt).getTime()) / 1000,
+        ),
+      )
+    : null;
+
   const { error: subErr } = await db().from("submissions").insert({
     participant_id: p.id,
     final_text: text,
     word_count: words,
+    duration_seconds: durationSeconds,
   });
   if (subErr)
     return NextResponse.json({ error: subErr.message }, { status: 500 });

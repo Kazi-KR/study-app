@@ -18,6 +18,16 @@ export default async function TaskPage() {
   const bio = biographyById(p.biography_id);
   if (!bio) redirect("/");
 
+  // First time the participant lands on /task, stamp task_started_at. The
+  // submit endpoint reads this back to compute time-on-task in seconds.
+  // Idempotent: subsequent visits (refresh, back-nav) won't overwrite it.
+  if (!p.task_started_at) {
+    await db()
+      .from("participants")
+      .update({ task_started_at: new Date().toISOString() })
+      .eq("id", p.id);
+  }
+
   const { data: msgs } = await db()
     .from("messages")
     .select("id, role, content, created_at")

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "inspect": "node --env-file=.env.local scripts/inspect-participant.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.3",

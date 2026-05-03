@@ -77,6 +77,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
   const isControl = condition === "control";
 
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [jobSuggestion, setJobSuggestion] = useState("");
   const [usagePattern, setUsagePattern] = useState<string>("");
   const [usageOther, setUsageOther] = useState("");
   const [noticed, setNoticed] = useState("");
@@ -93,16 +94,19 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
     isControl ||
     (usagePattern !== "" &&
       (usagePattern !== "other" || usageOther.trim().length > 0));
+  const jobSuggestionOk = jobSuggestion.trim().length > 0;
 
-  const allAnswered = allLikertsAnswered && usagePatternOk;
+  const allAnswered = allLikertsAnswered && usagePatternOk && jobSuggestionOk;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!allAnswered) {
       setError(
-        isControl
-          ? "Please answer the remaining items."
-          : "Please answer every item, including the usage pattern.",
+        !jobSuggestionOk
+          ? "Please answer the first question about the job you suggested."
+          : isControl
+            ? "Please answer the remaining items."
+            : "Please answer every item, including the usage pattern.",
       );
       return;
     }
@@ -112,6 +116,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
     const payload: {
       kind: "post";
       likert: Record<string, number>;
+      job_suggestion: string;
       usage_pattern?: string;
       usage_pattern_other?: string;
       noticed_anything?: string;
@@ -119,6 +124,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
     } = {
       kind: "post",
       likert: answers,
+      job_suggestion: jobSuggestion.trim(),
       study_guess: studyGuess,
     };
     if (!isControl) {
@@ -186,6 +192,24 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
       </p>
 
       <form onSubmit={onSubmit} className="space-y-6">
+        {/*
+          First question, asked of every condition: free-text job suggestion
+          the participant put in their career plan. Renders before the
+          AI-specific block so the numbering ({num()}) starts here.
+        */}
+        <label className="block">
+          <span className="text-sm font-medium mb-1 block">
+            {num()}. What job or occupation did you suggest for that person in
+            your career plan?
+          </span>
+          <textarea
+            value={jobSuggestion}
+            onChange={(e) => setJobSuggestion(e.target.value)}
+            className="w-full min-h-[80px] rounded-md border border-neutral-300 bg-white p-3 text-sm leading-6 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
+            placeholder="A short answer is fine — e.g. 'data analyst', 'teacher', 'product manager'."
+          />
+        </label>
+
         {!isControl && (
           <>
             {USAGE_LIKERTS.map(likertRow)}

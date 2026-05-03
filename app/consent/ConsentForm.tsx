@@ -18,15 +18,19 @@ export default function ConsentForm({
         </p>
 
         <h2 className="text-base font-semibold mt-6 mb-2">What You Will Do</h2>
-        <p>If you agree to participate, you will:</p>
+        <p>Participants will be asked to complete the following tasks:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li>Read a short biography of a recent university graduate</li>
           <li>
-            Have a brief conversation with an AI assistant about career
-            planning
+            Prepare a 200&ndash;300 word written career plan for that
+            individual
           </li>
-          <li>Write a 200&ndash;300 word career plan for that graduate</li>
-          <li>Complete a short survey</li>
+          <li>
+            Depending on the assigned study condition, the task may be
+            completed either independently or with the support of an AI-based
+            writing assistant
+          </li>
+          <li>Complete a brief post-task survey</li>
         </ul>
 
         <h2 className="text-base font-semibold mt-6 mb-2">Duration</h2>
@@ -54,8 +58,7 @@ export default function ConsentForm({
         <p>
           No directly identifying information (such as name or email) will be
           collected. All data will be stored securely and used only for
-          research purposes. Results will be reported in aggregate form, and
-          individual responses will not be identifiable.
+          research purposes. 
         </p>
 
         <h2 className="text-base font-semibold mt-6 mb-2">

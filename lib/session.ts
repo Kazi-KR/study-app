@@ -38,6 +38,7 @@ export type ParticipantRow = {
   consent_given: boolean;
   demographics: Record<string, unknown> | null;
   debriefed: boolean;
+  task_started_at: string | null;
 };
 
 export async function loadParticipant(): Promise<ParticipantRow | null> {
@@ -45,7 +46,9 @@ export async function loadParticipant(): Promise<ParticipantRow | null> {
   if (!id) return null;
   const { data, error } = await db()
     .from("participants")
-    .select("id, condition, biography_id, consent_given, demographics, debriefed")
+    .select(
+      "id, condition, biography_id, consent_given, demographics, debriefed, task_started_at",
+    )
     .eq("id", id)
     .maybeSingle();
   if (error || !data) return null;

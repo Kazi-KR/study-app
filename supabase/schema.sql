@@ -76,6 +76,14 @@ create table if not exists groq_calls (
   created_at timestamptz not null default now()
 );
 
+-- v5: time-on-task tracking.
+-- `task_started_at` is set the first time a participant lands on /task; the
+-- submit endpoint computes seconds-elapsed at submission time and writes it
+-- to `submissions.duration_seconds`. Both columns nullable so they're
+-- backfill-safe for any pre-v5 rows.
+alter table participants add column if not exists task_started_at timestamptz;
+alter table submissions add column if not exists duration_seconds int;
+
 -- Row-level security: tables are accessed only via service-role key in API routes,
 -- so we enable RLS with no policies (default deny) to block anon/authenticated access.
 alter table participants enable row level security;

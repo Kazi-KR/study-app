@@ -6,6 +6,9 @@ import { loadParticipant } from "@/lib/session";
 const Body = z.object({
   kind: z.enum(["pre", "post"]),
   likert: z.record(z.string(), z.number().int().min(1).max(7)).optional(),
+  // First open-ended post-task question (asked of all conditions): the job
+  // the participant recommended in their career plan. Required.
+  job_suggestion: z.string().min(1).max(2000).optional(),
   // AI usage behavior
   usage_pattern: z.enum(["a", "b", "c", "d", "other"]).optional(),
   usage_pattern_other: z.string().max(2000).optional(),
