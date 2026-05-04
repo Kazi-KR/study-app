@@ -9,14 +9,42 @@ type ChatMsg = { id: number | string; role: "user" | "assistant"; content: strin
 
 type Condition = "biased" | "neutral" | "control";
 
-const TASK_BRIEF = `Below is a short biography of a recent university graduate. Based on this biography, write a career plan for this person of at least 200 words.
-
-In your response, include the answer of the following in separate paragraphs:
-
-• What single career would this person be most qualified based on their demonstrated experience and why?
-• What personal qualities and strengths should they highlight to employers?
-• How do they work best (e.g. independently, in teams, in leadership, in support roles) and why?
-• What is the biggest challenge this person may face in their suggested workplace?`;
+// Task brief shown above the biography. Uses full-strength text colour
+// (black/white) and one Tailwind size up from the previous text-sm so the
+// instructions read like a primary block, not a footnote. The "In your
+// response…" line is bolded so participants don't miss the four-question
+// structure when scanning.
+const TASK_BRIEF = (
+  <div className="text-base text-black mb-6 max-w-3xl dark:text-white">
+    <p>
+      Below is a short biography of a recent university graduate. Based on
+      this biography, write a career plan for this person of at least 200
+      words.
+    </p>
+    <p className="mt-3 font-semibold">
+      In your response, include the answer of the following in separate
+      paragraphs:
+    </p>
+    <ul className="mt-1 space-y-0.5">
+      <li>
+        • What single career would this person be most qualified based on
+        their demonstrated experience and why?
+      </li>
+      <li>
+        • What personal qualities and strengths should they highlight to
+        employers?
+      </li>
+      <li>
+        • How do they work best (e.g. independently, in teams, in leadership,
+        in support roles) and why?
+      </li>
+      <li>
+        • What is the biggest challenge this person may face in their
+        suggested workplace?
+      </li>
+    </ul>
+  </div>
+);
 
 // Shared height for the editor + assistant columns so they line up visually.
 const PANEL_HEIGHT = "h-[70vh] min-h-[520px]";
@@ -181,10 +209,22 @@ export default function TaskClient({
     <section
       className={`rounded-lg border border-neutral-200 bg-white shadow-sm flex flex-col dark:border-neutral-800 dark:bg-neutral-900 ${PANEL_HEIGHT}`}
     >
-      <div className="px-5 py-3 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="px-5 py-3 border-b border-neutral-200 flex items-center justify-between dark:border-neutral-800">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
           Your career plan
         </h2>
+        {/* Word-count indicator lives in the header now. Red while under 200,
+            green once the minimum is met. Aligns with the "Writing assistant"
+            chat-turn indicator on the other panel's header. */}
+        <span
+          className={`text-xs ${
+            wordOk
+              ? "text-emerald-700 dark:text-emerald-400"
+              : "text-red-600 dark:text-red-400"
+          }`}
+        >
+          {words} words {wordOk ? "✓" : "(minimum 200)"}
+        </span>
       </div>
       <div className="flex-1 p-3 min-h-0">
         <SpellcheckTextarea
@@ -194,17 +234,6 @@ export default function TaskClient({
         />
       </div>
       <div className="border-t border-neutral-200 px-5 py-3 dark:border-neutral-800">
-        <div className="flex items-center justify-between text-xs text-neutral-600 dark:text-neutral-400">
-          <span className={wordOk ? "text-emerald-700 dark:text-emerald-400" : ""}>
-            {words} words {wordOk ? "✓" : "(minimum 200)"}
-          </span>
-          {!isControl && (
-            <span className={turnsOk ? "text-emerald-700 dark:text-emerald-400" : ""}>
-              {userTurns} / {minUserTurns} chat turns{" "}
-              {turnsOk ? "✓" : "(minimum required)"}
-            </span>
-          )}
-        </div>
         {/* Only shown after a Submit click — no passive nagging while the
             participant is still working. The red block is cleared on the next
             successful click-path. */}
@@ -236,10 +265,26 @@ export default function TaskClient({
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
           AI assistant
         </h2>
-        <span
-          className={`text-xs ${capReached ? "text-red-600 dark:text-red-400" : "text-neutral-500 dark:text-neutral-400"}`}
-        >
-          {userTurns} / {maxUserTurns} used
+        {/* Combined chat-turn indicator. The leading count is RED while the
+            participant hasn't yet hit the chat-turn gate (`minUserTurns`),
+            flips GREEN once they have. If they later hit the message cap
+            (`maxUserTurns`) the count goes back to RED as a warning. The
+            "/ 15" denominator stays neutral throughout. */}
+        <span className="text-xs">
+          <span
+            className={
+              capReached
+                ? "text-red-600 dark:text-red-400 font-semibold"
+                : userTurns >= minUserTurns
+                  ? "text-emerald-700 dark:text-emerald-400 font-semibold"
+                  : "text-red-600 dark:text-red-400 font-semibold"
+            }
+          >
+            {userTurns}
+          </span>
+          <span className="text-neutral-500 dark:text-neutral-400">
+            {" "}/ {maxUserTurns} used
+          </span>
         </span>
       </div>
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
@@ -345,9 +390,7 @@ export default function TaskClient({
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
       <div className="mx-auto max-w-7xl px-6 py-8">
         <h1 className="text-xl font-semibold mb-2">Career Plan Task</h1>
-        <p className="text-sm text-neutral-600 mb-6 max-w-3xl whitespace-pre-line dark:text-neutral-400">
-          {TASK_BRIEF}
-        </p>
+        {TASK_BRIEF}
 
         {/* Biography on top, full width. */}
         <div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm mb-6 dark:border-neutral-800 dark:bg-neutral-900">

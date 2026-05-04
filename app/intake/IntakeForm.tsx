@@ -181,7 +181,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
         </Field>
 
         <Likert
-          label="How would you rate your ability to write clearly and accurately in English?"
+          label="How would you rate your English writing proficiency?"
           options={LIKERT_ENGLISH}
           value={form.english_proficiency}
           onChange={(v) => update("english_proficiency", v)}
