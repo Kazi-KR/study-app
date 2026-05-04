@@ -41,7 +41,7 @@ const USAGE_LIKERTS: { key: string; label: string; scale: "agree" | "edit" }[] =
   },
   {
     key: "edit_amount",
-    label: "How much did you edit the AI's suggestions?",
+    label: "How much did you edit the AI assistants suggestions?",
     scale: "edit",
   },
 ];
