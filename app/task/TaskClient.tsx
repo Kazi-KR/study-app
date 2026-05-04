@@ -9,7 +9,7 @@ type ChatMsg = { id: number | string; role: "user" | "assistant"; content: strin
 
 type Condition = "biased" | "neutral" | "control";
 
-const TASK_BRIEF = `Below is a short biography of a recent university graduate. Based on this biography, write a 200–300 word career plan for this person.
+const TASK_BRIEF = `Below is a short biography of a recent university graduate. Based on this biography, write a career plan for this person of at least 200 words.
 
 In your response, include the answer of the following in separate paragraphs:
 
@@ -56,7 +56,10 @@ export default function TaskClient({
     () => careerPlan.trim().split(/\s+/).filter(Boolean).length,
     [careerPlan],
   );
-  const wordOk = words >= 200 && words <= 300;
+  // Only a minimum (200) is enforced. Participants may write as many words as
+  // they like above that — no upper cap, no warning if they exceed any
+  // particular count.
+  const wordOk = words >= 200;
   // Control group has no assistant, so the chat-turn gate doesn't apply.
   const turnsOk = isControl ? true : userTurns >= minUserTurns;
   const capReached = !isControl && userTurns >= maxUserTurns;
@@ -75,8 +78,7 @@ export default function TaskClient({
       return `Please chat with the writing assistant at least ${minUserTurns} times before submitting (${remaining} more to go).`;
     }
     if (!wordOk) {
-      if (words < 200) return `Your plan is ${words} words — please write at least 200.`;
-      if (words > 300) return `Your plan is ${words} words — please trim it to at most 300.`;
+      return `Your plan is ${words} words — please write at least 200.`;
     }
     return null;
   })();
@@ -181,20 +183,20 @@ export default function TaskClient({
     >
       <div className="px-5 py-3 border-b border-neutral-200 dark:border-neutral-800">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          Your career plan (200–300 words)
+          Your career plan (200 words or more)
         </h2>
       </div>
       <div className="flex-1 p-3 min-h-0">
         <SpellcheckTextarea
           value={careerPlan}
           onChange={setCareerPlan}
-          placeholder="Write your 200–300 word career plan here…"
+          placeholder="Write your career plan here (at least 200 words)…"
         />
       </div>
       <div className="border-t border-neutral-200 px-5 py-3 dark:border-neutral-800">
         <div className="flex items-center justify-between text-xs text-neutral-600 dark:text-neutral-400">
           <span className={wordOk ? "text-emerald-700 dark:text-emerald-400" : ""}>
-            {words} words {wordOk ? "✓" : "(target: 200–300)"}
+            {words} words {wordOk ? "✓" : "(minimum 200)"}
           </span>
           {!isControl && (
             <span className={turnsOk ? "text-emerald-700 dark:text-emerald-400" : ""}>

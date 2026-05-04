@@ -1,5 +1,26 @@
 "use client";
 
+import { useFormStatus } from "react-dom";
+
+// Submit button rendered as a child of the form so React's `useFormStatus`
+// can report `pending` while the server action is in flight. Without this
+// the button just sat there for a couple of seconds (server action + redirect
+// + next-page render) and the participant got no feedback. Now it
+// immediately shows "Submitting…" and disables, so the wait feels intentional.
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      aria-busy={pending}
+      className="rounded-md bg-black px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+    >
+      {pending ? "Submitting…" : "I agree to participate in this study"}
+    </button>
+  );
+}
+
 export default function ConsentForm({
   action,
 }: {
@@ -86,12 +107,7 @@ export default function ConsentForm({
       */}
       <form action={action}>
         <input type="hidden" name="consent" value="on" />
-        <button
-          type="submit"
-          className="rounded-md bg-black px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
-        >
-          I agree to participate in this study
-        </button>
+        <SubmitButton />
       </form>
     </main>
   );

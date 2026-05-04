@@ -9,7 +9,6 @@ const Body = z.object({
 
 const MIN_USER_TURNS = Number(process.env.MIN_USER_TURNS ?? "3");
 const MIN_WORDS = 200;
-const MAX_WORDS = 300;
 
 function wordCount(s: string): number {
   return s.trim().split(/\s+/).filter(Boolean).length;
@@ -29,9 +28,9 @@ export async function POST(req: Request) {
 
   const text = parsed.data.final_text;
   const words = wordCount(text);
-  if (words < MIN_WORDS || words > MAX_WORDS) {
+  if (words < MIN_WORDS) {
     return NextResponse.json(
-      { error: `Career plan must be ${MIN_WORDS}–${MAX_WORDS} words (you have ${words}).` },
+      { error: `Career plan must be at least ${MIN_WORDS} words (you have ${words}).` },
       { status: 400 },
     );
   }
