@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import MarkdownMessage from "@/components/MarkdownMessage";
 
 type Bio = {
   id: string;
@@ -240,22 +241,36 @@ export default function PreviewClient({ biographies }: { biographies: Bio[] }) {
                   Send a message to probe the assistant with the selected biography and condition.
                 </p>
               )}
-              {messages.map((m) => (
-                <div
-                  key={m.id}
-                  className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-                >
+              {messages.map((m) => {
+                // Same split as TaskClient: user bubbles are plain text (with
+                // pre-wrapped whitespace), assistant bubbles render markdown
+                // so **bold**, lists, code blocks, etc. show formatted.
+                const isUser = m.role === "user";
+                return (
                   <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-6 whitespace-pre-wrap ${
-                      m.role === "user"
-                        ? "bg-black text-white dark:bg-white dark:text-black"
-                        : "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
-                    }`}
+                    key={m.id}
+                    className={`flex ${isUser ? "justify-end" : "justify-start"}`}
                   >
-                    {m.content || (m.role === "assistant" && streaming ? "…" : "")}
+                    <div
+                      className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-6 ${
+                        isUser
+                          ? "whitespace-pre-wrap bg-black text-white dark:bg-white dark:text-black"
+                          : "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+                      }`}
+                    >
+                      {isUser ? (
+                        m.content
+                      ) : m.content ? (
+                        <MarkdownMessage content={m.content} />
+                      ) : streaming ? (
+                        "…"
+                      ) : (
+                        ""
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               <div ref={chatEndRef} />
             </div>
             {error && (

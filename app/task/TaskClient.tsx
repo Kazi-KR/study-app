@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import SpellcheckTextarea from "./SpellcheckTextarea";
+import MarkdownMessage from "@/components/MarkdownMessage";
 
 type ChatMsg = { id: number | string; role: "user" | "assistant"; content: string };
 
@@ -242,22 +243,38 @@ export default function TaskClient({
             your plan.
           </p>
         )}
-        {messages.map((m) => (
-          <div
-            key={m.id}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-          >
+        {messages.map((m) => {
+          // User bubbles render as plain text (their input is never markdown);
+          // assistant bubbles go through ReactMarkdown so **bold**, lists,
+          // code blocks, etc. render correctly. The `whitespace-pre-wrap`
+          // class only applies to user bubbles — markdown handles its own
+          // whitespace.
+          const isUser = m.role === "user";
+          return (
             <div
-              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-6 whitespace-pre-wrap ${
-                m.role === "user"
-                  ? "bg-black text-white dark:bg-white dark:text-black"
-                  : "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
-              }`}
+              key={m.id}
+              className={`flex ${isUser ? "justify-end" : "justify-start"}`}
             >
-              {m.content || (m.role === "assistant" && streaming ? "…" : "")}
+              <div
+                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-6 ${
+                  isUser
+                    ? "whitespace-pre-wrap bg-black text-white dark:bg-white dark:text-black"
+                    : "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+                }`}
+              >
+                {isUser ? (
+                  m.content
+                ) : m.content ? (
+                  <MarkdownMessage content={m.content} />
+                ) : streaming ? (
+                  "…"
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         <div ref={chatEndRef} />
       </div>
       <div className="border-t border-neutral-200 p-3 dark:border-neutral-800">
