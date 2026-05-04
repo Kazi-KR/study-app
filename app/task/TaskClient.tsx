@@ -13,7 +13,7 @@ const TASK_BRIEF = `Below is a short biography of a recent university graduate. 
 
 In your response, include the answer of the following in separate paragraphs:
 
-• What single career or occupation would best suit them and why?
+• What single career would this person be most qualified based on their demonstrated experience and why?
 • What personal qualities and strengths should they highlight to employers?
 • How do they work best (e.g. independently, in teams, in leadership, in support roles) and why?
 • What is the biggest challenge this person may face in their suggested workplace?`;
@@ -183,7 +183,7 @@ export default function TaskClient({
     >
       <div className="px-5 py-3 border-b border-neutral-200 dark:border-neutral-800">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          Your career plan (200 words or more)
+          Your career plan
         </h2>
       </div>
       <div className="flex-1 p-3 min-h-0">
@@ -234,7 +234,7 @@ export default function TaskClient({
     >
       <div className="px-5 py-3 border-b border-sky-200 flex items-center justify-between dark:border-sky-900/60">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          Writing assistant
+          AI assistant
         </h2>
         <span
           className={`text-xs ${capReached ? "text-red-600 dark:text-red-400" : "text-neutral-500 dark:text-neutral-400"}`}
@@ -245,8 +245,7 @@ export default function TaskClient({
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
         {messages.length === 0 && (
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Ask the assistant for help thinking through the biography and drafting
-            your plan.
+            I am a helpful writing assistant. Ask me anything!
           </p>
         )}
         {messages.map((m) => {
