@@ -21,11 +21,23 @@ const EDIT_LABELS = [
   "Extensively",
 ];
 
+// AI-block Likerts. Order matters: this is what determines question numbers
+// shown to the participant. `ai_influenced_career` is asked first (right
+// after the open-ended job-suggestion question above) so the two
+// career-related items sit back-to-back. All four AI-influence questions use
+// the magnitude ("edit") scale — "Not at all → Extensively" — since the new
+// wording is "How much…" rather than agree/disagree statements.
 const USAGE_LIKERTS: { key: string; label: string; scale: "agree" | "edit" }[] = [
   {
+    key: "ai_influenced_career",
+    label:
+      "How much did the AI assistant influence the career you recommended?",
+    scale: "edit",
+  },
+  {
     key: "influence",
-    label: "The assistant noticeably influenced what I wrote.",
-    scale: "agree",
+    label: "How much did the AI assistant influence what you wrote?",
+    scale: "edit",
   },
   {
     key: "edit_amount",
@@ -53,22 +65,27 @@ const USAGE_PATTERNS: { key: string; label: string }[] = [
     label:
       "I asked the AI to write the career plan entirely and then edited it",
   },
+  {
+    key: "e",
+    label: "I chose a career and had the AI assistant write about it",
+  },
   { key: "other", label: "Other (please specify)" },
 ];
 
+// Rendered after the usage-pattern picker. `ai_influenced_career` moved up
+// into USAGE_LIKERTS, so this list now contains the two remaining
+// AI-influence questions. Same magnitude scale ("Not at all → Extensively")
+// is applied at render time below.
 const PERCEIVED_ITEMS: { key: string; label: string }[] = [
-  {
-    key: "ai_influenced_career",
-    label: "The AI assistant influenced the career I recommended.",
-  },
   {
     key: "ai_influenced_strengths",
     label:
-      "The AI assistant influenced how I described the person's strengths.",
+      "How much did the AI assistant influence how you described the person's strengths?",
   },
   {
     key: "would_have_differed",
-    label: "I would have written something different without the AI.",
+    label:
+      "How different do you think your response would have been without the AI assistant?",
   },
 ];
 
@@ -247,7 +264,7 @@ export default function PostSurvey({ condition }: { condition: Condition }) {
               )}
             </div>
 
-            {PERCEIVED_ITEMS.map((i) => likertRow({ ...i, scale: "agree" }))}
+            {PERCEIVED_ITEMS.map((i) => likertRow({ ...i, scale: "edit" }))}
 
             <label className="block">
               <span className="text-sm font-medium mb-1 block">

@@ -15,6 +15,10 @@ const YEAR_LEVELS = [
 ];
 const LIKERT_FREQ = ["Never", "Rarely", "Sometimes", "Often", "Daily"];
 const LIKERT_CONF = ["Not at all", "Slightly", "Moderately", "Quite", "Very confident"];
+// Self-rated English writing ability — asked of every participant before the
+// essay-writing frequency question. Five-point scale; the numeric 1–5 value
+// is what gets stored.
+const LIKERT_ENGLISH = ["Very poor", "Poor", "Average", "Good", "Excellent"];
 // Essay-writing frequency options (asked of every participant regardless of
 // condition). Five-point scale to match the existing Likert UI; the numeric
 // 1–5 value is what gets stored.
@@ -43,6 +47,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
     university: "BRAC University",
     year_level: "",
     field_of_study: "Computer Science and Engineering",
+    english_proficiency: 0,
     essay_writing_frequency: 0,
     ai_use_frequency: 0,
     ai_confidence: 0,
@@ -61,6 +66,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
       !form.university ||
       !form.year_level ||
       !form.field_of_study ||
+      !form.english_proficiency ||
       !form.essay_writing_frequency;
     const aiMissing =
       showAiQuestions && (!form.ai_use_frequency || !form.ai_confidence);
@@ -79,6 +85,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
       university: form.university,
       year_level: form.year_level,
       field_of_study: form.field_of_study,
+      english_proficiency: form.english_proficiency,
       essay_writing_frequency: form.essay_writing_frequency,
     };
     if (showAiQuestions) {
@@ -172,6 +179,13 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
             className="input"
           />
         </Field>
+
+        <Likert
+          label="How would you rate your ability to write clearly and accurately in English?"
+          options={LIKERT_ENGLISH}
+          value={form.english_proficiency}
+          onChange={(v) => update("english_proficiency", v)}
+        />
 
         <Likert
           label="How often do you write essay-style responses for academic, personal or professional purposes?"

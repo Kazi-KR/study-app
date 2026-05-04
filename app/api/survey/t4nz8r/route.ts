@@ -10,7 +10,7 @@ const Body = z.object({
   // the participant recommended in their career plan. Required.
   job_suggestion: z.string().min(1).max(2000).optional(),
   // AI usage behavior
-  usage_pattern: z.enum(["a", "b", "c", "d", "other"]).optional(),
+  usage_pattern: z.enum(["a", "b", "c", "d", "e", "other"]).optional(),
   usage_pattern_other: z.string().max(2000).optional(),
   // Bias awareness check
   noticed_anything: z.string().max(4000).optional(),
