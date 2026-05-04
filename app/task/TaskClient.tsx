@@ -224,11 +224,15 @@ export default function TaskClient({
     </section>
   );
 
+  // Assistant panel gets a subtle sky-blue tint so it's instantly visually
+  // distinct from the editor (which keeps the plain white/neutral surface a
+  // writing canvas should have). Border + header divider tinted to match so
+  // it reads as one cohesive panel, not a default panel with a blue patch.
   const assistantSection = (
     <section
-      className={`rounded-lg border border-neutral-200 bg-white shadow-sm flex flex-col dark:border-neutral-800 dark:bg-neutral-900 ${PANEL_HEIGHT}`}
+      className={`rounded-lg border border-sky-200 bg-sky-50 shadow-sm flex flex-col dark:border-sky-900/60 dark:bg-sky-950/30 ${PANEL_HEIGHT}`}
     >
-      <div className="px-5 py-3 border-b border-neutral-200 flex items-center justify-between dark:border-neutral-800">
+      <div className="px-5 py-3 border-b border-sky-200 flex items-center justify-between dark:border-sky-900/60">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
           Writing assistant
         </h2>
@@ -279,7 +283,7 @@ export default function TaskClient({
         })}
         <div ref={chatEndRef} />
       </div>
-      <div className="border-t border-neutral-200 p-3 dark:border-neutral-800">
+      <div className="border-t border-sky-200 p-3 dark:border-sky-900/60">
         {capReached && (
           <div className="mb-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-900 dark:bg-amber-950 dark:border-amber-900 dark:text-amber-200">
             You&apos;ve reached the {maxUserTurns}-message limit. You can still
