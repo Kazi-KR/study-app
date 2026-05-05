@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { loadParticipant, loadSessionId } from "@/lib/session";
+import { loadParticipant, getSessionId } from "@/lib/session";
 
 const Body = z.object({
   final_text: z.string().min(1).max(10000),
@@ -15,10 +15,14 @@ function wordCount(s: string): number {
 }
 
 export async function POST(req: Request) {
-  const p = await loadParticipant();
+  // Run the two cookie-driven reads in parallel. `getSessionId` is just a
+  // cookie lookup (was previously `loadSessionId`, which added a Supabase
+  // SELECT to verify the row existed — pure overhead, since downstream
+  // queries are scoped by session_id and naturally fail if the cookie is
+  // bad). Saves one round-trip per submit click.
+  const [p, sessionId] = await Promise.all([loadParticipant(), getSessionId()]);
   if (!p || !p.consent_given)
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  const sessionId = await loadSessionId();
   if (!sessionId)
     return NextResponse.json({ error: "no session" }, { status: 401 });
 
@@ -80,10 +84,17 @@ export async function POST(req: Request) {
   if (subErr)
     return NextResponse.json({ error: subErr.message }, { status: 500 });
 
-  await db()
-    .from("sessions")
-    .update({ status: "submitted", ended_at: new Date().toISOString() })
-    .eq("id", sessionId);
+  // Update the session row in the background — it's only used for analytics
+  // ("did this session reach submitted state? when did it end?") and isn't
+  // on the participant's critical path. `after()` runs the callback once the
+  // 200 has been sent to the browser, so the participant proceeds to /post
+  // without waiting for this UPDATE.
+  after(async () => {
+    await db()
+      .from("sessions")
+      .update({ status: "submitted", ended_at: new Date().toISOString() })
+      .eq("id", sessionId);
+  });
 
   return NextResponse.json({ ok: true });
 }
