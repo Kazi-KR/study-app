@@ -12,14 +12,14 @@ Next.js + Groq + Supabase app for an MS thesis at the HCI × NLP intersection. P
 
 ### 2. Groq
 
-Create 5 API keys at https://console.groq.com/keys (one is fine for local dev — the code falls back to `GROQ_API_KEY`).
+Create up to 20 API keys at https://console.groq.com/keys (one is fine for local dev — the code falls back to `GROQ_API_KEY`). More keys = more rate-limit headroom under concurrent participant load; the loader reads any contiguous prefix of `GROQ_API_KEY_1` … `GROQ_API_KEY_20`.
 
 ### 3. Environment variables
 
 Copy `.env.local.example` to `.env.local` and fill in:
 
 - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- `GROQ_API_KEY_1` … `GROQ_API_KEY_5`
+- `GROQ_API_KEY_1` … `GROQ_API_KEY_20` (any subset; higher count = more rate-limit headroom)
 - `STUDY_SLUG_A` (control — no AI), `STUDY_SLUG_B` (neutral AI), `STUDY_SLUG_C` (biased AI) — pick opaque short slugs
 - `EXPORT_TOKEN` — a long random string for `/api/export`
 

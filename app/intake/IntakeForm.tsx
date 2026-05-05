@@ -106,7 +106,7 @@ export default function IntakeForm({ condition }: { condition: Condition }) {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
+    <main className="mx-auto max-w-4xl px-6 py-10">
       <h1 className="text-2xl font-semibold mb-4">About you</h1>
       <p className="text-sm text-neutral-600 mb-6 dark:text-neutral-400">
         A few short questions before the main task. All answers are anonymous.
@@ -276,7 +276,10 @@ function Likert({
   return (
     <div>
       <div className="text-sm font-medium mb-2">{label}</div>
-      <div className="flex flex-wrap gap-2">
+      {/* No-wrap so all option pills sit on a single row. Falls back to a
+          horizontal scroll on viewports too narrow to fit them all (e.g.
+          phones at long-label scales like the essay-frequency Likert). */}
+      <div className="flex gap-2 overflow-x-auto">
         {options.map((o, i) => {
           const v = i + 1;
           return (

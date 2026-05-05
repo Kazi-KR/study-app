@@ -42,7 +42,7 @@ export default function ConsentForm({
         <ul className="list-disc pl-5 space-y-1">
           <li>Read a short biography of a recent university graduate</li>
           <li>
-            Prepare a 200&ndash;300 word written career plan for that
+            Prepare a written career plan (at least 200 words) for that
             individual
           </li>
           <li>

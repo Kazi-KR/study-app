@@ -15,7 +15,7 @@ type Condition = "biased" | "neutral" | "control";
 // response…" line is bolded so participants don't miss the four-question
 // structure when scanning.
 const TASK_BRIEF = (
-  <div className="text-base text-black mb-6 max-w-3xl dark:text-white">
+  <div className="text-base text-black mb-6 max-w-5xl dark:text-white">
     <p>
       Below is a short biography of a recent university graduate. Based on
       this biography, write a career plan for this person of at least 200
@@ -268,8 +268,9 @@ export default function TaskClient({
         {/* Combined chat-turn indicator. The leading count is RED while the
             participant hasn't yet hit the chat-turn gate (`minUserTurns`),
             flips GREEN once they have. If they later hit the message cap
-            (`maxUserTurns`) the count goes back to RED as a warning. The
-            "/ 15" denominator stays neutral throughout. */}
+            (`maxUserTurns`) the count goes back to RED as a warning.
+            "(minimum N turns)" is shown inline to remind the participant of
+            the submit gate. The "/ 15 used" denominator stays neutral. */}
         <span className="text-xs">
           <span
             className={
@@ -283,7 +284,9 @@ export default function TaskClient({
             {userTurns}
           </span>
           <span className="text-neutral-500 dark:text-neutral-400">
-            {" "}/ {maxUserTurns} used
+            {userTurns < minUserTurns
+              ? ` (minimum ${minUserTurns} turns) / ${maxUserTurns} used`
+              : ` / ${maxUserTurns} used`}
           </span>
         </span>
       </div>

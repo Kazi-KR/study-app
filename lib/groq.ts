@@ -17,7 +17,10 @@ type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
 function loadKeys(): string[] {
   const keys: string[] = [];
-  for (let i = 1; i <= 5; i++) {
+  // Scan a wide range so adding more keys to .env / Vercel just works without
+  // a code edit. Empty/missing slots are skipped harmlessly by the trim
+  // check below — the loop bound is just a ceiling on how many we'll look at.
+  for (let i = 1; i <= 20; i++) {
     const k = process.env[`GROQ_API_KEY_${i}`];
     if (k && k.trim()) keys.push(k.trim());
   }
@@ -27,7 +30,7 @@ function loadKeys(): string[] {
   }
   if (keys.length === 0) {
     throw new Error(
-      "No Groq API keys configured. Set GROQ_API_KEY_1..5 or GROQ_API_KEY.",
+      "No Groq API keys configured. Set GROQ_API_KEY_1..20 or GROQ_API_KEY.",
     );
   }
   return keys;
